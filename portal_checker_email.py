@@ -24,12 +24,7 @@ def log(msg, color="default"):
 URL = "https://schmgr.unn.edu.ng/LoginHostel.aspx?sent=e01a1733-1f93-4214-b6a5-7964ae2eda21"
 EMAIL_ADDRESS = "akpanjoseph2021@gmail.com"
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-EMAIL_LIST = [
-    "akpanjoseph2021@gmail.com",
-    "ugochiblessing@gmail.com",
-    "promisechinonso385@gmail.com"
-    "christabeleze066@gmail.com"
-]
+EMAIL_LIST = [email.strip() for email in os.getenv("EMAIL_LIST", "").split(",") if email.strip()]
 CHECK_INTERVAL = 5 * 60
 # ==================
 
@@ -71,7 +66,7 @@ while True:
         if response.status_code == 200:
             send_email()
             log("✅ Portal is back — emails sent!", "green")
-            break
+           
         else:
             now_str = datetime.now().strftime("%I:%M %p")
             next_check = datetime.fromtimestamp(time.time() + CHECK_INTERVAL).strftime("%I:%M %p")
@@ -79,4 +74,7 @@ while True:
     except:
         log("🚧 No response yet…", "red" )
 
-    time.sleep(CHECK_INTERVAL)
+    for i in range(int(CHECK_INTERVAL / 60), 0, -1):
+        print(f"\r⏳ Next check in {i} minute(s)...   ", end="", flush=True)
+        time.sleep(60)
+    print("\r", end="")
