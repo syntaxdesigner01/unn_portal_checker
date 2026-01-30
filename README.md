@@ -64,12 +64,6 @@ _local Console:_
   <img src="./preview.png" alt="Console Dashboard Preview" />
 </p>
 
-_Replit Console:_
-
-<p align="center">
-  <img src="./replit.png" alt="Console Dashboard Preview" />
-</p>
-
 - 🔵 **Blue**: System startup / Portal remains up.
 - 🟡 **Yellow**: Checking status / Network wait.
 - 🟢 **Green**: Portal is back online (Email sent).
