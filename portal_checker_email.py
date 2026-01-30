@@ -5,7 +5,12 @@ import os
 from email.message import EmailMessage
 from datetime import datetime
 from dotenv import load_dotenv
+import keep_alive
 
+# Keep Replit alive
+keep_alive.keep_alive()
+
+# Load env variables
 load_dotenv()
 
 def log(msg, color="default"):
@@ -18,14 +23,20 @@ def log(msg, color="default"):
     }
     print(f"{colors.get(color,'')}{msg}{colors['reset']}")
 
-
-
 # ===== CONFIG =====
 URL = "https://schmgr.unn.edu.ng/LoginHostel.aspx?sent=e01a1733-1f93-4214-b6a5-7964ae2eda21"
-EMAIL_ADDRESS = "akpanjoseph2021@gmail.com"
+
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-EMAIL_LIST = [email.strip() for email in os.getenv("EMAIL_LIST", "").split(",") if email.strip()]
-CHECK_INTERVAL = 5 * 60
+
+EMAIL_LIST = [
+    email.strip()
+    for email in os.getenv("EMAIL_LIST", "").split(",")
+    if email.strip()
+]
+
+CHECK_INTERVAL = 5 * 60  # 5 minutes
 # ==================
 
 def send_email():
@@ -48,7 +59,8 @@ The UNN hostel portal is finally responding again 😌
 
 Please try to complete payment quickly before traffic increases.
 
-link :https://schmgr.unn.edu.ng/LoginHostel.aspx?sent=e01a1733-1f93-4214-b6a5-7964ae2eda21
+🔗 Link:
+https://schmgr.unn.edu.ng/LoginHostel.aspx?sent=e01a1733-1f93-4214-b6a5-7964ae2eda21
 
 Wishing you smooth success ✨
 — Portal Watcher
@@ -60,22 +72,38 @@ Wishing you smooth success ✨
 
 log("🌙 UNN Portal Watcher started...", "blue")
 
+# 🔑 THIS IS THE KEY FIX
+last_status = "down"
 
 while True:
     try:
         response = requests.get(URL, timeout=10)
-        if response.status_code == 200:
-            send_email()
-            log("✅ Portal is back — emails sent!", "green")
-           
-        else:
-            now_str = datetime.now().strftime("%I:%M %p")
-            next_check = datetime.fromtimestamp(time.time() + CHECK_INTERVAL).strftime("%I:%M %p")
-            log(f"😴 Still down… Checked: {now_str}, Next check: {next_check}", "yellow")
-    except:
-        log("🚧 No response yet…", "red" )
 
+        # Optional smarter check:
+        is_up = response.status_code == 200 and "Login" in response.text
+
+        if is_up:
+            if last_status == "down":
+                send_email()
+                log("✅ Portal just came back — email sent!", "green")
+                last_status = "up"
+            else:
+                log("🟢 Portal still up — no alert sent", "blue")
+        else:
+            if last_status == "up":
+                log("🔴 Portal went down again", "red")
+            last_status = "down"
+
+    except Exception:
+        if last_status == "up":
+            log("🔴 Portal went down again", "red")
+        else:
+            log("🚧 No response yet…", "yellow")
+        last_status = "down"
+
+    # Countdown UI
     for i in range(int(CHECK_INTERVAL / 60), 0, -1):
         print(f"\r⏳ Next check in {i} minute(s)...   ", end="", flush=True)
         time.sleep(60)
     print("\r", end="")
+    log("🔍 Checking portal status...", "yellow")
