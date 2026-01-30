@@ -42,6 +42,12 @@ This project uses environment variables to manage sensitive credentials.
 # Your Gmail App Password (not your regular login password)
 EMAIL_PASSWORD=xxxx xxxx xxxx xxxx
 
+#sender email address
+EMAIL_ADDRESS=myemail@gmail.com
+
+
+EMAIL_PASSWORD=xxxx xxxx xxxx xxxx
+
 # Comma-separated list of recipients
 EMAIL_LIST=student1@gmail.com,student2@yahoo.com,friend@outlook.com
 ```
