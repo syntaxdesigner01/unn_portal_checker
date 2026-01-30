@@ -58,8 +58,16 @@ python portal_checker_email.py
 
 **Console Output:**
 
+_local Console:_
+
 <p align="center">
   <img src="./preview.png" alt="Console Dashboard Preview" />
+</p>
+
+_Replit Console:_
+
+<p align="center">
+  <img src="./replit.png" alt="Console Dashboard Preview" />
 </p>
 
 - 🔵 **Blue**: System startup / Portal remains up.
